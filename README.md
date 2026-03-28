@@ -20,5 +20,5 @@ Repositório feito com intuito de salvar e compartilhar a minha configuração d
 Clone o repositório:
 
 ```bash
-git clone https://github.com/SEU-USUARIO/kali-auto-setup.git
+git clone https://github.com/joaov1t/kali-auto-setup.git
 cd kali-auto-setup
