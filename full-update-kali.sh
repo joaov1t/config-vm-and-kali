@@ -45,9 +45,9 @@ rmf="sudo rm -rf"
 token="Coloque o token aqui"
 user="kali"
 
-# Customizando terminalz
-sudo git clone https://github.com/cesarbtakeda/MyBash-Zshrc.git && cd MyBash-Zshrc
-sudo cp -r zshrc.sh ~/.zshrc && cp -r zshrc.sh /home/$user/.zshrc
+# Customizando terminal
+git clone https://github.com/joaov1t/mybash-interface && cd mybash-interface
+sudo cp -r mybash-interface.sh ~/.zshrc && cp -r mybash-interface.sh /home/$user/.zshrc
 
 # Muda a source list
 grep -q "deb-src http://http.kali.org/kali" /etc/apt/sources.list || \
