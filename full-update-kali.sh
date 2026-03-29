@@ -8,41 +8,13 @@ fi
 
 echo "=== Iniciando atualização completa do sistema ==="
 
-# Função de loading para os titulos
-loading() {
-  msg="$1"
-  while true; do
-    for i in "." ".." "..."; do
-      echo -ne "\r$msg$i "
-      sleep 0.4
-    done
-  done
-}
-
-run_loading() {
-  msg="$1"
-  shift
-
-  loading "$msg" &
-  pid=$!
-
-  "$@" > /dev/null 2>&1
-
-  kill $pid
-  wait $pid 2>/dev/null
-
-  echo -e "\r$msg... ✔"
-}
-
 # Variáveis
 c="clear"
-i="sudo apt-get install -y"
 p="sudo pip3 install"
 b="--break-system-packages"
 w="sudo wget"
 co="sudo cp -r"
 rmf="sudo rm -rf"
-token="Coloque o token aqui"
 user="kali"
 
 # Customizando terminal
@@ -56,18 +28,18 @@ echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free non-f
 # Configura o proxychains4
 echo "socks5  127.0.0.1 9050" >> /etc/proxychains4.conf
 
-run_loading "[*Atualizando arquivos*" sudo apt-get update
-run_loading "[*Atualizando sistema*" sudo apt-get upgrade -y
+echo "[*Atualizando arquivos*" sudo apt-get update -y
+echo "[*Atualizando sistema*" sudo apt-get upgrade -y
 $c
 
 # Instalação do Ngrok
-run_loading "🌐 Instalando Ngrok" bash -c '
+echo "🌐 Instalando Ngrok" 
 curl -fsSL https://ngrok-agent.s3.amazonaws.com/ngrok.asc | \
 sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null && \
 echo "deb https://ngrok-agent.s3.amazonaws.com bookworm main" | \
 sudo tee /etc/apt/sources.list.d/ngrok.list >/dev/null && \
-sudo apt update -y && sudo apt install -y ngrok
-'
+sudo $i ngrok
+
 
 echo "✔ Ngrok instalado"
 
@@ -77,71 +49,77 @@ echo ""
 ngrok config add-authtoken "$token"
 echo "✔ Token configurado"
 
+
 # Instalação de pacotes básicos
-run_loading "[*Instalando pacotes básicos*" bash -c '
-packages=(python3-pip php-curl python3 wget apache2)
-for pkg in "${packages[@]}"; do
-  sudo apt-get install -y "$pkg"
-done
-'
+echo "[*Instalando pacotes básicos*]" 
+sudo apt-get install -y python3-pip
+sudo apt-get install -y php-curl
+sudo apt-get install -y python2
+sudo apt-get install -y python3 
+sudo apt-get install -y wget 
+sudo apt-get install -yapache2
+
+
 
 # Cloudflared
-run_loading "[*Baixando Cloudflared*" bash -c '
-wget https://github.com/cloudflare/cloudflared/releases/download/2025.1.0/cloudflared-fips-linux-amd64 -O cloudflare && \
-chmod +x cloudflare && \
+echo "[*Baixando Cloudflared*]" 
+wget https://github.com/cloudflare/cloudflared/releases/download/2025.1.0/cloudflared-fips-linux-amd64 -O cloudflare
+chmod +x cloudflare
 sudo mv cloudflare /usr/local/bin/
-'
-
 echo "[*Cloudflared baixado e instalado com sucesso*]"
 
 # ferramentas pessoais
-run_loading "[*Baixando ferramentas pessoais*" bash -c '
-sudo apt-get install -y gccgo-go golang-go apksigner apktool zipalign php-curl tor seclists && \
+echo "[*Baixando ferramentas pessoais*]"  
+sudo apt-get install -y openvpn
+sudo apt-get install -y && sudo apt-get install -y golang-go
+sudo apt-get install -y && sudo apt-get install -y apktool
+sudo apt-get install -y zipalign && sudo apt-get install -y php-curl
+sudo apt-get install -y tor && sudo apt-get install -y seclists
 pipx install uro && sudo pipx install uro
-'
 $c
 
 # bug bounty
-run_loading "[*Baixando ferramentas bug bounty*" bash -c '
-git clone https://github.com/s0md3v/XSStrike.git && cd XSStrike && \
-sudo chmod +x * && sudo mv * /usr/loca/bin/ && \
-sudo go install github.com/tomnomnom/waybackurls@latest && \
-sudo go install github.com/tomnomnom/gf@latest && \
-sudo CGO_ENABLED=1 go install github.com/projectdiscovery/katana/cmd/katana@latest && \
-sudo go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
-'
-$c
+echo "[*Baixando ferramentas bug bounty*]"  
+git clone https://github.com/cesarbtakeda/H00ks_T0x1na.git && cd H00ks_T0x1na/API-BEEF
+git clone https://github.com/beefproject/beef.git && cd beef
+sudo chmod 777 * && sudo ./install
+sudo bundle install -y && sudo chmod 777 *
+$co ../config.yaml config.yaml
 
 # phishing tools
-run_loading "[*Baixando ferramentas de phishing*" bash -c '
+echo "[*Baixando ferramentas de phishing*]" 
 git clone https://gitlab.com/KasRoudra/MaxPhisher && \
 git clone https://gitlab.com/KasRoudra/CamHacker && \
 git clone https://github.com/Lucksi/Mr.Holmes && \
-git clone https://github.com/cesarbtakeda/H00ks_T0x1na.git && \
-cd H00ks_T0x1na/API-BEEF && \
+git clone https://github.com/cesarbtakeda/H00ks_T0x1na.git
+
+echo "[*Baixando Beef*]" 
 git clone https://github.com/beefproject/beef.git && cd beef && \
 sudo chmod +x * && sudo ./install && \
 sudo bundle install && sudo chmod +x * && \
 sudo cp -r ../config.yaml config.yaml
-'
+
+# configurando pastas das ferramentas baixadas
+sudo mv ~/go/bin/httpx ~/go/bin/httpx-pd
+$co ~/go/bin/*  /usr/local/bin/
 
 # limpeza
-run_loading "[*Limpando sistema*" sudo apt-get install kali-linux-everything -y
-run_loading "[*Removendo pacotes desnecessários*" sudo apt-get autoremove -y
+echo "[*Limpando sistema*]" sudo apt-get install kali-linux-everything -y
+echo "[*Removendo pacotes desnecessários*]" sudo apt-get autoremove -y
 $c
 
-run_loading "[*Atualizando ferramentas*" bash -c '
+echo "[*Atualizando ferramentas*" 
 sudo subfinder -up && sudo wpscan --update && sudo nuclei -ut
-'
+
 $c
 
 # serviços
-run_loading "[*Iniciando serviços*" bash -c '
+echo "[*Iniciando serviços*]" 
 sudo systemctl start ssh && sudo systemctl enable ssh.service && \
 sudo systemctl start tor && sudo systemctl enable tor.service && \
 sudo systemctl start postgresql && sudo systemctl enable postgresql.service && \
 sudo systemctl start apache2 && sudo systemctl enable apache2.service && \
 sudo msfdb init && sudo msfdb start
-'
+
 
 echo "[*A atualização foi concluída com sucesso*]"
