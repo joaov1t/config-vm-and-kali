@@ -70,9 +70,10 @@ echo "[*Cloudflared baixado e instalado com sucesso*]"
 
 # ferramentas pessoais
 echo "[*Baixando ferramentas pessoais*]"  
+sudo go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
 sudo apt-get install -y openvpn
-sudo apt-get install -y && sudo apt-get install -y golang-go
-sudo apt-get install -y && sudo apt-get install -y apktool
+&& sudo apt-get install -y golang-go
+&& sudo apt-get install -y apktool
 sudo apt-get install -y zipalign && sudo apt-get install -y php-curl
 sudo apt-get install -y tor && sudo apt-get install -y seclists
 pipx install uro && sudo pipx install uro
